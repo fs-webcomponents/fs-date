@@ -1,0 +1,62 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../fs-request/fs-request.html">
+
+<dom-module id="fs-date">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <fs-request id="request" url="{{_computeUrl(original)}}"></fs-request>
+    <paper-autocomplete 
+      id="autocomplete" 
+      label="date" 
+      no-label-float 
+      remote-source
+      on-autocomplete-change="_autocompleteChange"></paper-autocomplete>
+  </template>
+
+  <script>
+    /**
+     * `fs-date`
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FsDate extends Polymer.Element {
+      
+      static get is() { return 'fs-date'; }
+      
+      static get properties() {
+        return {
+          original: String,
+          normalizedLang: String,
+          normalizedValue: String,
+          formal: String
+        };
+      }
+      
+      ready() {
+        super.ready();
+      }
+      
+      _computeUrl() {
+        if(this.original) {
+          return `/platform/dates?date=${this.original}`;
+        }
+      }
+      
+      _autocompleteChange(e) {
+        if(e.detail && e.detail.text) {
+          this.original = e.detail.text;
+        }
+        this.$.request.generateRequest();
+      }
+    }
+
+    window.customElements.define(FsDate.is, FsDate);
+  </script>
+</dom-module>
