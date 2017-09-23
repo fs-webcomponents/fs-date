@@ -41,6 +41,9 @@
       
       ready() {
         super.ready();
+        this.$.request.headers = {
+          Accept: 'text/plain'
+        };
       }
       
       _computeUrl() {
