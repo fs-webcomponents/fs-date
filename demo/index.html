@@ -23,6 +23,9 @@
       <demo-snippet>
         <template>
           <fs-date></fs-date>
+          <script>
+            document.querySelector('fs-date').addEventListener('date-changed', (e) => console.log(e.detail.value));
+          </script>
         </template>
       </demo-snippet>
     </div>

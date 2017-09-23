@@ -9,13 +9,14 @@
         display: block;
       }
     </style>
-    <fs-request id="request" url="{{_computeUrl(original)}}"></fs-request>
+    <fs-request id="request" url="{{_computeUrl(original)}}" on-response="_handleResponse"></fs-request>
     <paper-autocomplete 
       id="autocomplete" 
       label="date" 
       no-label-float 
       remote-source
-      on-autocomplete-change="_autocompleteChange"></paper-autocomplete>
+      on-autocomplete-change="_autocompleteChange"
+      on-autocomplete-selected="_autocompleteSelected"></paper-autocomplete>
   </template>
 
   <script>
@@ -32,10 +33,10 @@
       
       static get properties() {
         return {
-          original: String,
-          normalizedLang: String,
-          normalizedValue: String,
-          formal: String
+          date: {
+            type: Object,
+            notify: true
+          }
         };
       }
       
@@ -56,7 +57,32 @@
         if(e.detail && e.detail.text) {
           this.original = e.detail.text;
         }
+        // TODO: debounce
         this.$.request.generateRequest();
+      }
+      
+      _autocompleteSelected(e) {
+        this.date = JSON.parse(e.detail.value);
+      }
+      
+      _handleResponse(e) {
+        const response = e.detail.response;
+        if(response.statusCode === 200) {
+          const value = {
+            original: response.body,
+            normalized: [{
+              lang: response.headers['content-language'],
+              value: response.body
+            }],
+            formal: response.headers.location ? response.headers.location.replace('gedcomx-date:', '') : undefined
+          };
+          this.$.autocomplete.suggestions([
+            {
+              text: response.body,
+              value: JSON.stringify(value)
+            }
+          ]);
+        }
       }
     }
 
