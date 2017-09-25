@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="../fs-request/fs-request.html">
 
@@ -9,14 +10,17 @@
         display: block;
       }
     </style>
-    <fs-request id="request" url="{{_computeUrl(original)}}" on-response="_handleResponse"></fs-request>
-    <paper-autocomplete 
-      id="autocomplete" 
-      label="date" 
-      no-label-float 
-      remote-source
-      on-autocomplete-change="_autocompleteChange"
-      on-autocomplete-selected="_autocompleteSelected"></paper-autocomplete>
+    <div id="date" hidden$="[[edit]]">{{_displayDate(date)}}</div>
+    <template is="dom-if" if="[[edit]]">
+      <fs-request id="request" url="{{_computeUrl(original)}}" on-response="_handleResponse"></fs-request>
+      <paper-autocomplete 
+        id="autocomplete" 
+        label="date" 
+        no-label-float 
+        remote-source
+        on-autocomplete-change="_autocompleteChange"
+        on-autocomplete-selected="_autocompleteSelected"></paper-autocomplete>
+    </template>
   </template>
 
   <script>
@@ -35,16 +39,40 @@
         return {
           date: {
             type: Object,
-            notify: true
+            notify: true,
+            value: function(){
+              return {};
+            }
+          },
+          
+          /* Toggle edit mode */
+          edit: {
+            type: Boolean,
+            value: false,
+            observer: '_setupEdit'
           }
         };
       }
       
-      ready() {
-        super.ready();
-        this.$.request.headers = {
-          Accept: 'text/plain'
-        };
+      _displayDate(date) {
+        if(!date) {
+          return '';
+        }
+        return date.original || (date.normalized && date.normalized[0] ? date.normalized[0].value : false) || date.formal;
+      }
+      
+      _setupEdit(edit) {
+        // Have to defer this execution to give time for Polymer to stamp the
+        // DOM since it's in a dom-if helper template
+        setTimeout(() => {
+          if(edit) {
+            this.shadowRoot.querySelector('#request').headers = {
+              Accept: 'text/plain'
+            };
+            this.shadowRoot.querySelector('#autocomplete').text = this._displayDate(this.date);
+            this.shadowRoot.querySelector('#autocomplete').value = JSON.stringify(this.date);
+          }
+        });
       }
       
       _computeUrl() {
@@ -58,7 +86,7 @@
           this.original = e.detail.text;
         }
         // TODO: debounce
-        this.$.request.generateRequest();
+        this.shadowRoot.querySelector('#request').generateRequest();
       }
       
       _autocompleteSelected(e) {
@@ -76,7 +104,7 @@
             }],
             formal: response.headers.location ? response.headers.location.replace('gedcomx-date:', '') : undefined
           };
-          this.$.autocomplete.suggestions([
+          this.shadowRoot.querySelector('#autocomplete').suggestions([
             {
               text: response.body,
               value: JSON.stringify(value)

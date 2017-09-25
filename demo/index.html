@@ -19,12 +19,47 @@
   </head>
   <body>
     <div class="vertical-section-container centered">
-      <h3>Basic fs-date demo</h3>
+      <h3>Empty fs-date</h3>
       <demo-snippet>
         <template>
           <fs-date></fs-date>
+        </template>
+      </demo-snippet>
+      <h3>Display fs-date</h3>
+      <demo-snippet>
+        <template>
+          <fs-date id="display"></fs-date>
           <script>
-            document.querySelector('fs-date').addEventListener('date-changed', (e) => console.log(e.detail.value));
+            document.getElementById('display').date = {
+              original: '1 Feb 2014',
+              normalized: [{
+                lang: 'en',
+                value: '1 February 2014'
+              }],
+              formal: '+2014-02-01'
+            };
+          </script>
+        </template>
+      </demo-snippet>
+      <h3>Empty editable fs-date</h3>
+      <demo-snippet>
+        <template>
+          <fs-date edit></fs-date>
+        </template>
+      </demo-snippet>
+      <h3>Preset editable fs-date</h3>
+      <demo-snippet>
+        <template>
+          <fs-date edit id="editable"></fs-date>
+          <script>
+            document.getElementById('editable').date = {
+              original: '1 Feb 2014',
+              normalized: [{
+                lang: 'en',
+                value: '1 February 2014'
+              }],
+              formal: '+2014-02-01'
+            };
           </script>
         </template>
       </demo-snippet>
