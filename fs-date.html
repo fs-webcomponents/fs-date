@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../polymer/lib/utils/debounce.html">
 <link rel="import" href="../paper-autocomplete/paper-autocomplete.html">
 <link rel="import" href="../fs-request/fs-request.html">
 
@@ -50,7 +51,9 @@
             type: Boolean,
             value: false,
             observer: '_setupEdit'
-          }
+          },
+          
+          _debouncer: Object
         };
       }
       
@@ -85,8 +88,9 @@
         if(e.detail && e.detail.text) {
           this.original = e.detail.text;
         }
-        // TODO: debounce
-        this.shadowRoot.querySelector('#request').generateRequest();
+        this._debouncer = Polymer.Debouncer.debounce(this._debouncer, Polymer.Async.timeOut.after(300), () => { 
+          this.shadowRoot.querySelector('#request').generateRequest(); 
+        });
       }
       
       _autocompleteSelected(e) {
