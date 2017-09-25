@@ -13,7 +13,7 @@
     </style>
     <div id="date" hidden$="[[edit]]">{{_displayDate(date)}}</div>
     <template is="dom-if" if="[[edit]]">
-      <fs-request id="request" url="{{_computeUrl(original)}}" on-response="_handleResponse"></fs-request>
+      <fs-request id="request" url="{{_computeUrl(date.original)}}" on-response="_handleResponse"></fs-request>
       <paper-autocomplete 
         id="autocomplete" 
         label="date" 
@@ -75,19 +75,22 @@
         });
       }
       
-      _computeUrl() {
-        if(this.original) {
-          return `/platform/dates?date=${this.original}`;
+      _computeUrl(original) {
+        if(original) {
+          return `/platform/dates?date=${original}`;
         }
       }
       
       _autocompleteChange(e) {
         if(e.detail && e.detail.text) {
-          this.original = e.detail.text;
+          if(!this.date) {
+            this.date = {};
+          }
+          this.set('date.original', e.detail.text);
+          this._debouncer = Polymer.Debouncer.debounce(this._debouncer, Polymer.Async.timeOut.after(300), () => { 
+            this.shadowRoot.querySelector('#request').generateRequest(); 
+          });
         }
-        this._debouncer = Polymer.Debouncer.debounce(this._debouncer, Polymer.Async.timeOut.after(300), () => { 
-          this.shadowRoot.querySelector('#request').generateRequest(); 
-        });
       }
       
       _autocompleteSelected(e) {
