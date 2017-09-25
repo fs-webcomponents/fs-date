@@ -13,36 +13,66 @@
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="empty">
       <template>
         <fs-date></fs-date>
       </template>
     </test-fixture>
 
-    <test-fixture id="ChangedPropertyTestFixture">
+    <test-fixture id="display-date">
       <template>
-        <fs-date prop1="new-prop1"></fs-date>
+        <fs-date></fs-date>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="empty-edit">
+      <template>
+        <fs-date edit></fs-date>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="edit-prefilled">
+      <template>
+        <fs-date edit></fs-date>
       </template>
     </test-fixture>
 
     <script>
       suite('fs-date', function() {
 
-        test('instantiating the element with default properties works', function() {
-          var element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'fs-date');
-          var elementShadowRoot = element.shadowRoot;
-          var elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello fs-date!');
+        test('empty', function() {
+          var element = fixture('empty');
+          assert.equal(element.shadowRoot.querySelector('#date').textContent.trim(), '');
         });
-
-        test('setting a property on the element works', function() {
-          // Create a test fixture
-          var element = fixture('ChangedPropertyTestFixture');
-          assert.equal(element.prop1, 'new-prop1');
-          var elementShadowRoot = element.shadowRoot;
-          var elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello new-prop1!');
+        
+        test('display date', function() {
+          var element = fixture('display-date');
+          element.date = {
+            original: 'Feb 3, 1389'
+          };
+          assert.equal(element.shadowRoot.querySelector('#date').textContent, 'Feb 3, 1389');
+        });
+        
+        test('empty edit', function(done) {
+          var element = fixture('empty-edit');
+          setTimeout(() => {
+            assert(!!element.shadowRoot.querySelector('#autocomplete'));
+            assert(element.date === undefined);
+            done();
+          });
+        });
+        
+        test('edit prefilled', function(done) {
+          var element = fixture('empty-edit');
+          element.date = {
+            original: 'Feb 3, 1389'
+          };
+          assert.equal(element.shadowRoot.querySelector('#date').textContent, 'Feb 3, 1389');
+          setTimeout(() => {
+            assert(!!element.shadowRoot.querySelector('#autocomplete'));
+            assert(!!element.date);
+            done();
+          });
         });
 
       });

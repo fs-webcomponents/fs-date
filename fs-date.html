@@ -40,10 +40,7 @@
         return {
           date: {
             type: Object,
-            notify: true,
-            value: function(){
-              return {};
-            }
+            notify: true
           },
           
           /* Toggle edit mode */
@@ -67,7 +64,7 @@
       _setupEdit(edit) {
         // Have to defer this execution to give time for Polymer to stamp the
         // DOM since it's in a dom-if helper template
-        setTimeout(() => {
+        Polymer.Async.microTask.run(() => {
           if(edit) {
             this.shadowRoot.querySelector('#request').headers = {
               Accept: 'text/plain'
