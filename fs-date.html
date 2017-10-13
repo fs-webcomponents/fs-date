@@ -13,7 +13,11 @@
     </style>
     <div id="date" hidden$="[[edit]]">{{_displayDate(date)}}</div>
     <template is="dom-if" if="[[edit]]">
-      <fs-request id="request" url="{{_computeUrl(date.original)}}" on-response="_handleResponse"></fs-request>
+      <fs-request 
+        id="request" 
+        url="{{_computeUrl(date.original)}}"
+        headers='{"Accept":"text/plain"}'
+        on-response="_handleResponse"></fs-request>
       <paper-autocomplete 
         id="autocomplete" 
         label="date" 
@@ -64,15 +68,12 @@
       _setupEdit(edit) {
         // Have to defer this execution to give time for Polymer to stamp the
         // DOM since it's in a dom-if helper template
-        Polymer.Async.microTask.run(() => {
-          if(edit) {
-            this.shadowRoot.querySelector('#request').headers = {
-              Accept: 'text/plain'
-            };
+        if(edit) {
+          setTimeout(() => {
             this.shadowRoot.querySelector('#autocomplete').text = this._displayDate(this.date);
             this.shadowRoot.querySelector('#autocomplete').value = JSON.stringify(this.date);
-          }
-        });
+          });
+        }
       }
       
       _computeUrl(original) {
