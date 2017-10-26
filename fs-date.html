@@ -20,9 +20,10 @@
         on-response="_handleResponse"></fs-request>
       <paper-autocomplete 
         id="autocomplete" 
-        label="date" 
-        no-label-float 
+        label="[[label]]" 
+        no-label-float="[[no-label-float]]"
         remote-source
+        disabled="{{disabled}}"
         on-autocomplete-change="_autocompleteChange"
         on-autocomplete-selected="_autocompleteSelected"></paper-autocomplete>
     </template>
@@ -45,6 +46,21 @@
           date: {
             type: Object,
             notify: true
+          },
+          
+          label: {
+            type: String,
+            value: 'Date'
+          },
+          
+          noLabelFloat: {
+            type: Boolean,
+            value: false
+          },
+          
+          disabled: {
+            type: Boolean,
+            value: false
           },
           
           /* Toggle edit mode */
