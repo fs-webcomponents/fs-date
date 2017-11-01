@@ -105,13 +105,13 @@
         this.date = JSON.parse(e.detail.value);
       }
       
-      _autocompleteTextChanged(e) {
+      _autocompleteTextChanged() {
         const text = this.shadowRoot.querySelector('#autocomplete').text;
         if(text) {
           if(!this.date) {
             this.date = {};
           }
-          this.set('date.original', e.detail.text);
+          this.set('date.original', text);
           this._debouncer = Polymer.Debouncer.debounce(this._debouncer, Polymer.Async.timeOut.after(300), () => { 
             this.shadowRoot.querySelector('#request').generateRequest(); 
           });
