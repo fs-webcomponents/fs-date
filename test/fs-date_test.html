@@ -37,6 +37,12 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="clear">
+      <template>
+        <fs-date edit date='{"original":"Feb 3, 1889"}'></fs-date>
+      </template>
+    </test-fixture>
+
     <script>
       suite('fs-date', function() {
 
@@ -71,6 +77,16 @@
           setTimeout(() => {
             assert(!!element.shadowRoot.querySelector('#autocomplete'));
             assert(!!element.date);
+            done();
+          });
+        });
+        
+        test('clear', function(done){
+          var element = fixture('clear');
+          assert.equal(element.date.original, "Feb 3, 1889");
+          setTimeout(function(){
+            element.shadowRoot.querySelector('#autocomplete').clear();
+            assert.equal(element.date, undefined);
             done();
           });
         });

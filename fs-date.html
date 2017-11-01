@@ -24,8 +24,9 @@
         no-label-float="[[no-label-float]]"
         remote-source
         disabled="{{disabled}}"
-        on-autocomplete-change="_autocompleteChange"
-        on-autocomplete-selected="_autocompleteSelected"></paper-autocomplete>
+        on-keyup="_autocompleteTextChanged"
+        on-autocomplete-selected="_autocompleteSelected"
+        on-autocomplete-reset-blur="_autocompleteCleared"></paper-autocomplete>
     </template>
   </template>
 
@@ -84,10 +85,12 @@
       _setupEdit(edit) {
         // Have to defer this execution to give time for Polymer to stamp the
         // DOM since it's in a dom-if helper template
-        if(edit) {
+        if(edit && this.date) {
           setTimeout(() => {
-            this.shadowRoot.querySelector('#autocomplete').text = this._displayDate(this.date);
-            this.shadowRoot.querySelector('#autocomplete').value = JSON.stringify(this.date);
+            this.shadowRoot.querySelector('#autocomplete').setOption({
+              text: this._displayDate(this.date),
+              value: JSON.stringify(this.date)
+            });
           });
         }
       }
@@ -98,8 +101,13 @@
         }
       }
       
-      _autocompleteChange(e) {
-        if(e.detail && e.detail.text) {
+      _autocompleteSelected(e) {
+        this.date = JSON.parse(e.detail.value);
+      }
+      
+      _autocompleteTextChanged(e) {
+        const text = this.shadowRoot.querySelector('#autocomplete').text;
+        if(text) {
           if(!this.date) {
             this.date = {};
           }
@@ -107,11 +115,13 @@
           this._debouncer = Polymer.Debouncer.debounce(this._debouncer, Polymer.Async.timeOut.after(300), () => { 
             this.shadowRoot.querySelector('#request').generateRequest(); 
           });
+        } else {
+          this.date = undefined;
         }
       }
       
-      _autocompleteSelected(e) {
-        this.date = JSON.parse(e.detail.value);
+      _autocompleteCleared() {
+        this.date = undefined;
       }
       
       _handleResponse(e) {
@@ -131,6 +141,8 @@
               value: JSON.stringify(value)
             }
           ]);
+        } else {
+          this.shadowRoot.querySelector('#autocomplete').suggestions([]);
         }
       }
     }
