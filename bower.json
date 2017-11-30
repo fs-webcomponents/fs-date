@@ -5,7 +5,8 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "paper-autocomplete": "^3.3.0",
-    "fs-request": "fs-webcomponents/fs-request#^4.1.0"
+    "fs-request": "fs-webcomponents/fs-request#^4.1.0",
+    "fs-api-aware": "fs-webcomponents/fs-api-aware#^4.0.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

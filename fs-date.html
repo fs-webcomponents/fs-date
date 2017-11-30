@@ -2,6 +2,7 @@
 <link rel="import" href="../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../polymer/lib/utils/debounce.html">
 <link rel="import" href="../paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../fs-api-aware/fs-api-aware.html">
 <link rel="import" href="../fs-request/fs-request.html">
 
 <dom-module id="fs-date">
@@ -14,7 +15,8 @@
     <div id="date" hidden$="[[edit]]">{{_displayDate(date)}}</div>
     <template is="dom-if" if="[[edit]]">
       <fs-request 
-        id="request" 
+        id="request"
+        client-name="[[clientName]]"
         url="{{_computeUrl(date.original)}}"
         headers='{"Accept":"text/plain"}'
         on-response="_handleResponse"></fs-request>
@@ -38,7 +40,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class FsDate extends Polymer.Element {
+    class FsDate extends FSApiAwareMixin(Polymer.Element) {
       
       static get is() { return 'fs-date'; }
       
